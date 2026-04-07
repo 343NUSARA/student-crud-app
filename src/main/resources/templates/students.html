@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Students</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Arial, sans-serif;
+               background: #f0f2f5; min-height: 100vh; padding: 40px; }
+        .container { max-width: 1000px; margin: 0 auto; }
+        h1 { color: #2c3e50; font-size: 28px; margin-bottom: 24px; }
+        .top-bar { display: flex; gap: 12px; margin-bottom: 20px; align-items: center; }
+        .btn-add { background: #27ae60; color: white; padding: 10px 20px;
+                   border: none; border-radius: 8px; font-size: 14px;
+                   cursor: pointer; text-decoration: none; white-space: nowrap; }
+        .btn-add:hover { background: #219a52; }
+        .search-form { display: flex; gap: 8px; flex: 1; }
+        .search-form input { padding: 10px 14px; border: 1px solid #ddd;
+                             border-radius: 8px; font-size: 14px; flex: 1; outline: none; }
+        .btn-search { background: #3498db; color: white; border: none;
+                      padding: 10px 18px; border-radius: 8px; cursor: pointer; font-size: 14px; }
+        .btn-clear { background: #95a5a6; color: white; padding: 10px 18px;
+                     border-radius: 8px; text-decoration: none; font-size: 14px; }
+        table { width: 100%; background: white; border-radius: 12px;
+                box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+                border-collapse: collapse; overflow: hidden; }
+        thead { background: #2c3e50; color: white; }
+        th { padding: 14px 18px; text-align: left; font-weight: 500; }
+        td { padding: 13px 18px; border-bottom: 1px solid #f0f0f0; color: #444; }
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background: #f8f9fa; }
+        .btn-edit { background: #3498db; color: white; padding: 6px 14px;
+                    border-radius: 6px; text-decoration: none; font-size: 13px; margin-right: 6px; }
+        .btn-edit:hover { background: #2980b9; }
+        .btn-delete { background: #e74c3c; color: white; padding: 6px 14px;
+                      border-radius: 6px; text-decoration: none; font-size: 13px; }
+        .btn-delete:hover { background: #c0392b; }
+        .badge { background: #eaf4fb; color: #2980b9; padding: 3px 10px;
+                 border-radius: 20px; font-size: 12px; }
+        .pagination { display: flex; gap: 8px; margin-top: 24px;
+                      justify-content: center; align-items: center; }
+        .page-btn { background: white; color: #2c3e50; padding: 8px 14px;
+                    border-radius: 8px; text-decoration: none; font-size: 14px;
+                    box-shadow: 0 2px 6px rgba(0,0,0,0.08); }
+        .page-btn:hover { background: #3498db; color: white; }
+        .page-btn.active { background: #2c3e50; color: white; }
+        .page-info { color: #777; font-size: 14px; margin-top: 12px;
+                     text-align: center; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
+        <h1 style="margin-bottom:0;">🎓 Student Management</h1>
+        <form th:action="@{/logout}" method="post">
+            <button style="background:#e74c3c; color:white; border:none;
+                       padding:10px 18px; border-radius:8px; cursor:pointer;
+                       font-size:14px;">Logout</button>
+        </form>
+    </div>
+    <div class="top-bar">
+        <a href="/students/new" class="btn-add">+ Add Student</a>
+        <form th:action="@{/students}" method="get" class="search-form">
+            <input type="text" name="keyword" th:value="${keyword}"
+                   placeholder="Search by name..." />
+            <button type="submit" class="btn-search">Search</button>
+            <a href="/students" class="btn-clear">Clear</a>
+        </form>
+    </div>
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Course</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="student : ${students}">
+            <td><span class="badge" th:text="${student.id}"></span></td>
+            <td th:text="${student.name}"></td>
+            <td th:text="${student.email}"></td>
+            <td th:text="${student.phone}"></td>
+            <td th:text="${student.course}"></td>
+            <td>
+                <a class="btn-edit"
+                   th:href="@{/students/edit/{id}(id=${student.id})}">Edit</a>
+                <a class="btn-delete"
+                   th:href="@{/students/delete/{id}(id=${student.id})}"
+                   onclick="return confirm('Delete this student?')">Delete</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <!-- Pagination buttons -->
+    <div class="pagination" th:if="${totalPages > 1}">
+        <a class="page-btn"
+           th:each="i : ${#numbers.sequence(1, totalPages)}"
+           th:href="@{/students(page=${i})}"
+           th:text="${i}"
+           th:classappend="${i == currentPage} ? ' active' : ''">
+        </a>
+    </div>
+    <p class="page-info" th:if="${totalPages > 1}">
+        Page <span th:text="${currentPage}"></span>
+        of <span th:text="${totalPages}"></span>
+    </p>
+</div>
+</body>
+</html>

@@ -3,6 +3,8 @@ package com.example.studentcrud;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import jakarta.validation.Valid;
+
 import java.util.List;
 
 @RestController
@@ -24,14 +26,14 @@ public class StudentApiController {
     }
 
     @PostMapping
-    public ResponseEntity<Student> createStudent(@RequestBody Student student) {
+    public ResponseEntity<Student> createStudent(@Valid @RequestBody Student student) {
         service.saveStudent(student);
         return ResponseEntity.ok(student);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Student> updateStudent(@PathVariable Long id,
-                                                 @RequestBody Student student) {
+                                                 @Valid @RequestBody Student student) {
         student.setId(id);
         service.saveStudent(student);
         return ResponseEntity.ok(student);
@@ -42,4 +44,6 @@ public class StudentApiController {
         service.deleteStudent(id);
         return ResponseEntity.ok("Student deleted successfully!");
     }
+
+
 }
